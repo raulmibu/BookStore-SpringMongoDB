@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta charset="UTF-8">
+<title>Sign up</title>
+	<link rel="icon" type="image/png" href="/images/pageicon.png" sizes="128x128">
+	<link  rel="stylesheet" th:href="@{/css/bootstrap.css}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+  	<body class="bg-dark">
+  	<header>
+		<div th:replace="fragments/navbar :: navbar">
+		</div>
+	</header>
+    <section class="h-100">
+	  <div class="container py-6" id="register-form">
+	    <div class="row d-flex justify-content-center align-items-center">
+	      <div class="col-md-9 h-50 d-inline-block">
+	        <div class="card card-registration my-4">
+	          <div class="row g-0">
+	            <div class="col-md-5  d-none d-xl-block bg-light align-middle">
+	              <img th:if="${usuario.profilePicture==null}"
+	                src="/images/register.jpg"
+	                alt="Sample photo"
+	                class="card-img-top "
+	                style="border-top-left-radius: .25rem; border-bottom-left-radius: .25rem;"
+	              /><div th:if="${usuario.profilePicture!=null}">
+	              <img th:if="${usuario.profilePicture!=''}"
+	                th:src="*{'data:image/png;base64,'+usuario.profilePicture}"
+	                alt="Sample photo"
+	                class="card-img-top"
+	                style="border-top-left-radius: .25rem; border-bottom-left-radius: .25rem;"
+	              /></div>
+	            </div>
+	            <div class="col">
+	              <div class="card-body p-md-3 text-black mt-4">
+	                <h3 class="mb-4 text-uppercase">Register</h3>
+				<form th:action="@{/signingup}" th:object=${usuario} method="POST" enctype="multipart/form-data">
+	                <div class="row">
+	                  <div class="form-group col-md-6 col-6">
+	                    <div class="form-outline mb-2">
+	                      <input th:field="*{profilePicture}" type="hidden" class="form-control"/>
+						  <input type="hidden" th:field="*{id}" class="form-control" placeholder="id"/>
+	                      <input type="text" th:field="*{name}" class="form-control" placeholder="Name" required="Llena esto >:("/>
+	                      <label class="form-label" for="form3Example1m">First name</label>
+	                    </div>
+	                  </div>
+	                  <div class="form-group col-md-6 col-6">
+	                    <div class="form-outline">
+	                      <input type="text" th:field="*{lastname}" class="form-control" placeholder="Last Name" required=""/>
+	                      <label class="form-label" for="form3Example1n">Last name</label>
+	                    </div>
+	                  </div>
+	                </div>
+		             <div class="row">
+						<div class="form-group col col-12 col-md-6  mb-3">
+		                  <input type="email" th:field="*{email}" class="form-control" placeholder="Email" required=""/>
+		                   <label class="form-label" for="form3Example8">Email</label>
+		                </div>
+		                <input type="hidden" th:if="${editing!=null}"  th:field="*{password}" class="form-control" placeholder="Password" required=""/>
+		                <div th:if="${editing==null}" class="form-group col col-12 col-md-6  mb-3">
+		                  <input type="password"  th:field="*{password}" class="form-control" placeholder="Password" required=""/>
+		                   <label class="form-label" for="form3Example8">Password</label>
+		                </div>
+		                 <!--div class="form-group col">
+		                  <input type="text" th:field="*{adress}" class="form-control" placeholder="Adress" required="" />
+		                  <label class="form-label" for="form3Example8">Address</label>
+		                </div-->
+		             </div>
+		             <div class="row">
+	                  <div class="form-group col">
+		                  <div class="input-group date">
+		                    <input type="date" class="form-control" id="birthday" autocomplete="off" th:field="*{birthday}" />
+		                	</div>
+		                  <label class="form-label" for="form3Example8">Birhtday</label>
+		                </div>
+		                  <div class="form-group col">
+		                    <select id="gender" name="gender" class="form-control">
+			                    <option disabled >Select a gender...</option>
+			                    <option th:selected="${usuario.gender.name==operator.name}" th:each="operator : ${genders}"  th:text="${operator}">gender list</option>
+		                    </select>
+		                    <label class="form-label" for="form3Example8">Gender</label>
+		                  </div>
+		                </div>
+		                
+		                <div class="row">
+							<div th:if="${usuario.profilePicture==null}" class="mb-3 col-md-7">
+								<input class="form-control" type="file" name="file"  id="formFile" accept="image/*"/>
+								<label class="form-label" for="form3Example8">Profile Picture</label>
+							</div>
+							<div class="form-group col" th:if="${usuario.profilePicture!=null}">
+								<div >
+									<div>
+										<input class="form-control" type="file" name="file"  id="formFile" accept="image/*"/>
+										<label class="form-label" for="form3Example8">Profile Picture</label>
+									</div>
+								</div>
+							</div>
+							<div class="form-group col-md-4 col-4" th:object=${roles} sec:authorize="hasAuthority('user:delete')">
+						      <select  id="userrole" name="userrole" class="form-control">
+							      <option disabled>Select a Role...</option>
+							      <option th:selected="${usuario.role.name==role.name}" th:each="role : ${roles}"  th:text="${role}">Role list</option>
+						      </select>
+						      <label class="form-label" for="form3Example8">Role</label>
+						    </div>
+						    <div class="row" sec:authorize="hasAuthority('user:write')">
+								<div class="form-group">
+									<div class="form-check form-switch">
+									  <input th:field="*{enabled}" class="form-check-input" type="checkbox" id="flexSwitchCheckChecked" checked>
+									  <label class="form-check-label" for="flexSwitchCheckChecked">Enable User</label>
+									</div>
+								</div>
+							</div>
+						</div>
+	                <!--<span sec:authorize="hasAnyRole('ADMIN')">-->
+						
+	                <!--/span-->
+					<div th:if="${param.error}">
+	               		This email is already registered
+	               </div>
+	                <div class="d-flex justify-content-end pt-3">
+	                  	<a th:href="@{/}" type="button" class="btn btn-info ms-2">Cancel</a>
+	                  <button type="submit" class="btn btn-warning ms-2">Sign up</button>
+	                </div>
+					</form>
+	              </div>
+	            </div>
+	          </div>
+	        </div>
+	      </div>
+	    </div>
+  	</div>
+	</section>
+<script th:src="@{/webjars/jquery/jquery.min.js}"></script>
+<script th:src="@{/webjars/popper.js/umd/popper.min.js}"></script>
+<script th:src="@{/webjars/bootstrap/js/bootstrap.min.js}"></script>
+<script th:src="@{assets/bootstrap-datepicker/js/bootstrap-datepicker.js}"></script>
+
+<script>
+    $('.input-group.date').datepicker({
+        autoclose: true,
+        todayHighlight: true
+    });
+</script>
+
+	</body>
+</html>

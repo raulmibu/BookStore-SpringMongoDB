@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Book Store</title>
+	<link rel="icon" type="image/png" href="/images/pageicon.png" sizes="128x128">
+	<link  rel="stylesheet" th:href="@{/css/bootstrap.css}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+	<!--link  rel="stylesheet" th:href="@{/css/index.css}"-->
+	<link  rel="stylesheet" th:href="@{/css/bookcard.css}">
+
+</head>
+<body>
+	<header>
+		<div th:replace="fragments/navbar :: navbar">
+		</div>
+	</header>
+	<main>
+		<div class="container-fluid">
+			<div class="row row-cols-auto justify-content-center pt-2">
+				<div class="col" th:each="category:${categories}">
+					<a th:href="@{search/category/}+${category.name}"><button type="button" class="btn btn-light btn-sm m-x-5 p-2" th:text="${category.name}">
+					</button></a>
+				</div>
+			</div>
+		</div>
+		<section class="result">
+		<div class="container-fluid">
+			<div  class = "row justify-content-md-left">
+	  			<div class="col-2 d-none d-md-block" >
+
+	  			</div>
+	  			<div class="col" >
+					  <div  class = "row d-flex justify-content-center">
+						  <div th:if="${results.empty}">
+							<a class="col-11  btn btn-light ms-2" href="/">No results, bring me back to home</a>
+						  </div>
+								<div th:each="book:${results}" class="col-5 col-sm-5 col-md-4 col-lg-4 col-xl-3 p-md-1 p-2">
+									<div class="col p-md-2 d-flex justify-content-center">
+										<div th:replace="fragments/bookcard :: bookcard">
+										</div>
+									</div>
+								</div>
+					   </div>
+	  				</div>
+	  			<div class="col-1 d-none d-lg-block" > 
+					<div th:if="${null}" class="row row-cols-auto justify-content-center pt-2">
+						<div class="col" th:each="category:${categories}">
+							<a th:href="@{/bussiness/category/}+${category.id}"><button type="button" class="btn btn-light btn-sm m-x-5 p-2" th:text="${category.name}">
+							</button></a>
+						</div>
+					</div>
+				</div>
+		 	</div>
+		</div>
+		<div class="col-8">
+			<span sec:authorize="hasAnyRole('EMPLOYEE','ADMIN')">
+				<a href="/admin/category">Add Category</a>
+				<a href="/admin/tag">Add Tag</a>
+		  	</span>
+		</div>
+     </section>
+	</main>
+
+</body>
+</html>

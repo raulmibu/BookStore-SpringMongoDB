@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta charset="UTF-8">
+<title>Log in</title>
+	<link rel="icon" type="image/png" href="/images/pageicon.png" sizes="128x128">
+	<link  rel="stylesheet" th:href="@{/css/bootstrap.css}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+  	<body class="">
+  	<header>
+		<div th:replace="fragments/navbar :: navbar">
+		</div>
+	</header>
+    <section class="h-100">
+	  <div class="container py-6" id="register-form">
+	    <div class="row d-flex justify-content-center align-items-center">
+	      <div class="col-md-9 h-50 d-inline-block">
+	        <div class="card card-registration my-3">
+	          <div class="row  g-0">
+	            <div class="col-md-5  d-none d-xl-block bg-danger">
+	              <img
+	                src="/images/login.jpg"
+	                alt="Sample photo"
+	                class="img-fluid"
+	                style="border-top-left-radius: .25rem; border-bottom-left-radius: .25rem;"
+	              />
+	            </div>
+	            <div class="col">
+	              <div class="card-body p-md-3 text-black mt-4">
+	                <h3 class="mb-3 text-uppercase">Sign in with</h3>
+					<form th:action="@{/login}" method="post">
+			         <div class="divider d-flex align-items-center my-2">
+			          </div>
+			         
+			          <div class="divider d-flex align-items-center my-2">
+			          </div>
+			
+			          <!-- Email input -->
+			          <div class="form-outline mb-4">
+			            <input type="email" id="form3Example3" class="form-control form-control-lg"
+			              placeholder="Email" required="" name="email"/>
+			            <label class="form-label" for="form3Example3">Email address</label>
+			          </div>
+			
+			          <!-- Password input -->
+			          <div class="form-outline mb-3">
+			            <input type="password" id="form3Example4" class="form-control form-control-lg"
+			              name="password" placeholder="Password" required="" />
+			            <label class="form-label" for="form3Example4">Password</label>
+			          </div>
+			
+			          <div class="d-flex justify-content-between align-items-center">
+			            <!-- Checkbox -->
+			            <div class="form-check mb-0">
+			              <input class="form-check-input me-2" type="checkbox" value="" for="remember-me" id="remember-me" />
+			              <label class="form-check-label" for="form2Example3">
+			                Remember me
+			              </label>
+			              <div th:if="${param.error}">
+			               		Invalid email or password.
+			               </div>
+			               <div th:if="${param.logout}">
+			           	    	You have been logged out.
+			               </div>
+			            </div>
+			            
+			            <a href="#!" class="text-body">Forgot password?</a>
+			          </div>
+			
+			          <div class="text-center text-lg-start mt-4 pt-2">
+			            <input type="submit" class="btn btn-primary btn-lg"
+			              style="padding-left: 2.5rem; padding-right: 2.5rem;" value="Login"></input>
+			            <p class="small fw-bold mt-2 pt-1 mb-0">Don't have an account? <a href="/signup"
+			                class="link-danger">Register</a></p>
+			          </div>
+			
+			        </form>
+	              </div>
+	            </div>
+	          </div>
+	        </div>
+	      </div>
+	    </div>
+  	</div>
+	</section>
+
+	</body>
+</html>

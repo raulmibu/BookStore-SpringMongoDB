@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Book List</title>
+	<link rel="icon" type="image/png" href="/images/pageicon.png" sizes="128x128">
+	<link  rel="stylesheet" th:href="@{/css/bootstrap.css}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+<body>
+	<header>
+		<div th:replace="fragments/navbar :: navbar">
+		</div>
+	</header>
+	<div class="container">
+	<a th:href="@{book/new}" class="btn btn-outline-secondary btn-sm">Add a New Book</a>
+		<table class="table table-hover table-sm">
+		<caption>List of books</caption>
+			<thead>
+				<tr>
+					<th>ISBN</th>	
+					<th>Title</th>					
+					<th>Category</th>						
+					<th>Author</th>	
+					<th>Price</th>
+					<th>Stock</th>
+					<th>Discount</th>
+					<th>Enabled</th>
+					<th>Options</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr th:classappend="${!book.enabled ? 'btn-outline-danger' : ''}" class="border" th:each="book:${books}">
+					<td th:text="${book.isbn}"></td>
+					<td th:text="${book.title}"></td>
+					<td ><span th:if="${book.category!=null}" th:text="${book.category.name}">
+						</span>
+					</td>
+					<td th:text="${book.author}"></td>
+					<td ><p class="text-justify"><spam th:text="${book.price}">price</spam>$</p></td>
+					<td th:text="${book.stock}"></td>
+					<td ><spam th:text="${book.discount}">discount</spam>%</td>
+					<td th:text="${book.isEnabledString()}"></td>
+					<span th:if="${session.usuario==null}">
+						<span sec:authorize="hasAnyRole('EMPLOYEE', 'ADMIN')">
+							<td >
+							<div class="btn-group" role="group" aria-label="Basic example">
+							  <a sec:authorize="hasAuthority('book:read')" th:href="@{/book/detail/}+${book.id}" type="button" class="btn btn-info"><i class="fa fa-search-minus" aria-hidden="true"></i></a>
+							  <a sec:authorize="hasAuthority('book:write')" th:href="@{book/edit/}+${book.id}" type="button" class="btn btn-warning"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></a>
+							  <a sec:authorize="hasAuthority('book:delete')" th:href="@{book/delete/}+${book.id}" type="button" class="btn btn-danger"><i class="fa fa-trash-o" aria-hidden="true"></i></a>
+							</div>
+							</td>
+						</span>
+					</span>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+</body>
+</html>

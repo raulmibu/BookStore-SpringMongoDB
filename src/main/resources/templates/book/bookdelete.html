@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+<meta charset="UTF-8">
+<title>Libros</title>
+	<link rel="icon" type="image/png" href="/images/pageicon.png" sizes="128x128">
+	<link  rel="stylesheet" th:href="@{/css/bootstrap.css}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+<body>
+	<header>
+		<div th:replace="fragments/navbar :: navbar">
+		</div>
+	</header>
+	<section class="h-100">
+	  <div class="container py-6" id="register-form">
+	    <div class="row d-flex justify-content-center align-items-center">
+	      <div class="col-md-9 h-50 d-inline-block">
+	        <div class="card card-registration my-3">
+	          <div class="row  g-0">
+	            <div class="col-md-5  d-none d-xl-block bg-danger">
+	              <img th:if="${book.coverPicture==null}"
+	                src="/images/login.jpg"
+	                alt="Sample photo"
+	                class="img-fluid"
+	                style="border-top-left-radius: .25rem; border-bottom-left-radius: .25rem;"
+	              />
+	              <img th:if="${book.coverPicture!=''}"
+	                th:src="*{'data:image/png;base64,'+book.coverPicture}"
+	                alt="Sample photo"
+	                class="card-img-top"
+	                style="border-top-left-radius: .25rem; border-bottom-left-radius: .25rem;"
+	              />
+	            </div>
+	            <div class="col">
+	              <div class="card-body p-md-3 text-black mt-4">
+	              	<h4 class="mb-3">Confirm to delete</h4>
+	                <h3 class="mb-3 text-uppercase"><span th:text="${book.title}"></span></h3>
+					<form th:action="@{/admin/book/delete/}+${book.id}" method="post">
+			         <div class="divider d-flex align-items-center my-2">
+			          </div>
+			         
+			          <div class="divider d-flex align-items-center my-2">
+			          </div>
+					<div class="row">
+						<div class="form-group col-md-5 col-6">
+				          <div class="form-outline">
+			         		<a class="h5 text-decoration-none" th:text="${book.author}" th:href="@{/search/author/}+${book.author}">author</a>
+			          	  	<br><label class="form-label" for="form3Example4">Author</label>
+						</div></div>
+						<div class="form-group col-md-5 col-6">
+							<div class="form-outline">
+				         		<a class="h5 text-decoration-none" th:text="${book.category.name}" th:href="@{/search/category/}+${book.category.name}">author</a>
+				          	  	<br><label class="form-label" for="form3Example4">Category</label>
+					 	</div></div>
+					 	<div class="form-group col-md-5 col-6">
+							<div class="form-outline" th:if="${book.created!=null}">
+				         		<a class="h5 text-decoration-none text-body" th:text="${book.created}">author</a>
+				          	  	<br><label class="form-label" for="form3Example4">Created at</label>
+					 	</div></div>
+					</div>
+			          <!-- Password input -->
+			         
+			
+			         
+			          <div class="text-center text-lg-start mt-4 pt-2">
+			            <input type="submit" class="btn btn-danger btn-lg"
+			              style="padding-left: 2.5rem; padding-right: 2.5rem;" value="Delete"></input>
+			          </div>
+						 <a sec:authorize="hasAuthority('book:read')" th:href="@{/book/detail/}+${book.id}" type="button" class="btn btn-info"><i class="fa fa-search-minus" aria-hidden="true"></i></a>
+							  <a sec:authorize="hasAuthority('book:write')" th:href="@{/admin/book/edit/}+${book.id}" type="button" class="btn btn-warning"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></a>
+			        </form>
+	              </div>
+	            </div>
+	          </div>
+	        </div>
+	      </div>
+	    </div>
+  	</div>
+	</section>
+</body>
+</html>

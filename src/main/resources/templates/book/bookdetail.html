@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta charset="UTF-8">
+<title th:text="${book.title}">Libros</title>
+	<link rel="icon" type="image/png" href="/images/pageicon.png" sizes="128x128">
+	<link  rel="stylesheet" th:href="@{/css/bootstrap.css}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+  	<body>
+  	<header>
+		<div th:replace="fragments/navbar :: navbar">
+		</div>
+	</header>
+    <section class="h-100">
+	  <div class="container py-6" id="register-form">
+	    <div class="row d-flex justify-content-center align-items-center">
+	      <div class="col-md-10 col-lg-12 h-50 d-inline-block">
+	        <div class="card card-registration my-3">
+	          <div class="row  g-0 justify-content-center">
+	            <div class="col-8 col-md-7 col-lg-4 col-xl-3 pt-md-3">
+	              <img
+	                th:src="*{'data:image/png;base64,'+book.coverPicture}"
+	                alt="Sample photo"
+	                class="img-fluid"
+	                style="border-top-left-radius: .25rem; border-bottom-left-radius: .25rem;"
+	              />
+	            </div>
+	            <div class="col-10 col-md-8 col-lg-6">
+	              <div class="card-body p-md-3 text-black mt-4">
+	                <h3 class="card-title mb-3" th:text="${book.title}">Title</h3>
+				<form th:action="@{/book/buy}" th:object=${book} method="post">
+					<input type="hidden"  th:field="*{id}">
+					<input type="hidden"  th:field="*{category}">
+					<input type="hidden"  th:field="*{price}">
+					<input type="hidden"  th:field="*{discount}">
+					<input type="hidden"  th:field="*{title}">
+
+		         	<div class="divider d-flex align-items-center my-2">
+		          	</div>
+		          	<div class="form-outline mb-3">
+		         		<a class="h5 text-decoration-none" th:text="${book.author}" th:href="@{/search/author/}+${book.author}">author</a>
+		          	<div class="divider d-flex align-items-center my-2">
+		          	</div>
+		          	</div>
+					<div class="form-outline mb-3">
+						<h3 class="m-0 p-0">
+						$<span th:text="${#numbers.formatDecimal({book.price - book.price * book.discount / 100}, 1, 2)}">price</span>
+	                    </h3>
+				        <small th:if="${book.discount>0}">
+				        	<del>$<span th:text="${#numbers.formatDecimal(book.price, 1, 2)}"></span>
+				        	</del>
+	                    </small>
+					</div>
+					<div class="form-outline mb-3">
+						<table class="table-sm table-borderless">
+							<tbody>
+							    <tr>
+							      <th scope="row">ISBN</th>
+							      <td>
+							      	<span th:text=${book.isbn}>Lorem ipsum</span>
+							      </td>
+							    </tr>
+							    <tr>
+							      <th scope="row">Publisher    </th>
+							      <td>
+							      	<span th:text=${book.publisher}>Lorem ipsum</span>
+							      </td>
+							    </tr>
+							    <tr>
+							      <th scope="row">Edition</th>
+							      <td>
+							      	<span th:text=${book.edition}>Lorem ipsum</span>
+							      </td>
+							    </tr>
+							    <tr>
+							      <th scope="row">Year</th>
+							      <td>
+							      	<span th:text=${book.year}>Lorem ipsum</span>
+							      </td>
+							    </tr>
+							    <tr>
+							      <th scope="row">Pages</th>
+							      <td>
+							      	<span th:text=${book.pages}>Lorem ipsum</span>
+							      </td>
+							    </tr>
+							  </tbody>
+							</table>
+						<span th:text=${book.overview}>Lorem ipsum</span>
+						<h6 class="card-text"><strong>Category  </strong>
+							<a class="text-decoration-none" th:text=${book.category.name} th:href="@{/search/category/}+${book.category.name}">category</a>
+						</h6>
+						
+					</div>
+			         <div class="row form-outline mb-3">
+			         	<div class="col-6 col-lg-4">
+			         		<div class="input-group mb-3">
+			         			<div class="input-group-prepend">
+							    	<span class="input-group-text" id="basic-addon1">Quanty</span>
+							  	</div>
+					         	<input class="form-control" name="quanty" th:min="1" th:type="number" th:max="${book.stock}" value="1">
+							</div>
+						</div>
+						<div class="col-6 col-lg-3">
+				            <input type="submit" class="btn btn-primary input-group mb-3"
+				               value="Buy">
+				        </div>
+				        <div class="col-6 col-lg-2">
+							<div class="input-group mb-3">
+				              <a sec:authorize="hasAuthority('book:write')" th:href="@{/admin/book/edit/}+${book.id}" type="button" class="btn btn-warning form-control"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></a>
+							</div>  
+						</div> 
+						<div class="col-6 col-lg-2">
+							<div class="input-group mb-3">
+							  <a sec:authorize="hasAuthority('book:delete')" th:href="@{/admin/book/delete/}+${book.id}" type="button" class="btn btn-danger form-control"><i class="fa fa-trash-o" aria-hidden="true"></i></a>
+			              </div>
+			              </div>
+			          </div>
+		        </form>
+	              </div>
+	            </div>
+	          </div>
+	        </div>
+	      </div>
+	    </div>
+	    	<div class="row d-flex justify-content-center border">
+	      		<div class="col-10 d-inline-block">
+	    	  		<h5 class="card-text tag-section"><strong>Sypnosys</strong></h5>
+					<h6 class="lh-sm text-start"><span th:text="${book.synopsis}">Synopsis</span></h6>
+					<hr>
+					<h6 class="card-text tag-section">Published in <span th:text="${book.country.name}">country</span>, <span th:text="${book.year}">year </span>, by <span th:text="${book.publisher}">publisher</span></h6>
+
+	    	 </div>
+	    </div>
+  	</div>
+  	<div class="divider d-flex align-items-center my-2">
+		          	</div>
+	</section>
+	</body>
+</html>

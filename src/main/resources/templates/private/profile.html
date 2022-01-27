@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title th:text ="${user.name +' '+user.lastname}">Profile</title>
+    <meta charset="UTF-8">
+    <link rel="icon" type="image/png" href="/images/pageicon.png" sizes="128x128">
+    <link href="/css/bootstrap.css" rel="stylesheet" th:href="@{/css/bootstrap.css}">
+    <link href="/css/profile.css" rel="stylesheet" th:href="@{/css/profile.css}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+</head>
+<body>
+<h3>Welcome back, <span th:text ="${user.getName() + ' ' +user.getLastname()}">name</span></h3>
+<span th:if="${user.profilePicture!=null}">
+    <img th:src="*{'data:image/png;base64,'+user.profilePicture}" class="img-fluid">
+</span>
+</body>
+</html>

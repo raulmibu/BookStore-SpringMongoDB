@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="/css/bootstrap.css" rel="stylesheet" th:href="@{/css/bootstrap.css}">
+    <link href="/css/profile.css" rel="stylesheet" th:href="@{/css/profile.css}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+	<script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+
+</head>
+<body>
+<header>
+		<div th:replace="fragments/navbar :: navbar">
+		</div>
+	</header>
+	<div class="container">
+	<a th:href="@{/signup}" class="btn btn-outline-secondary btn-sm">Add a New User</a>
+		<table class="table table table-hover table-sm">
+		<caption>List of users</caption>
+			<thead>
+				<tr>
+					<th>Name</th>	
+					<th>Last name</th>					
+					<th>Email</th>						
+					<th>Role</th>
+					<th>Created</th>
+					<th>Enabled</th>	
+					<th>Options</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr th:classappend="${!user.enabled ? 'btn-outline-danger' : ''}" class="border" th:each="user:${users}">
+					<td th:text="${user.name}"></td>
+					<td th:text="${user.lastname}"></td>
+					
+					<td th:text="${user.email}"></td>
+					<td th:text="${user.role.name}"></td>
+					<td th:text="${user.created}"></td>
+					<td th:text="${user.isEnabledString()}"></td>
+					<span th:if="${session.usuario==null}">
+						<span sec:authorize="hasAnyRole('EMPLOYEE', 'ADMIN')">
+							<td >
+							<div class="btn-group" role="group" aria-label="Basic example">
+							  <a sec:authorize="hasAuthority('user:write')" th:href="@{/admin/user/detail/}+${user.id}" type="button" class="btn btn-info"><i class="fa fa-search-minus" aria-hidden="true"></i></a>
+							  <a sec:authorize="hasAuthority('user:write')" th:href="@{/admin/user/edit/}+${user.id}" type="button" class="btn btn-warning"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></a>
+							  <a sec:authorize="hasAuthority('user:delete')" th:href="@{/admin/user/delete/}+${user.id}" type="button" class="btn btn-danger"><i class="fa fa-trash-o" aria-hidden="true"></i></a>
+							</div>
+							</td>
+						</span>
+					</span>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+	</body>
+</html>

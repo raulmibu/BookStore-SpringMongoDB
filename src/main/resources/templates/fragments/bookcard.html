@@ -1,0 +1,47 @@
+<div th:fragment="bookcard" class="card">
+	<a class="text-decoration-none text-body" th:href="@{/book/detail/}+${book.id}">
+    <div  class="image-container">
+        <div class="first">
+        <spam class="h7" th:if="${book.discount>0}">
+            <div class="d-flex justify-content-between align-items-center"> <span class="discount"><span th:text="${#numbers.formatDecimal(book.discount, 0, 0)}"></span> %</span> <span class="wishlist"><i class="fa fa-bookmark"></i></span> </div>
+        </spam>
+        </div> <img th:src="*{'data:image/png;base64,'+book.coverPicture}" class="img-fluid rounded thumbnail-image">
+    </div></a>
+    <div class="product-detail-container p-2">
+    <a class="text-decoration-none text-body" th:href="@{/book/detail/}+${book.id}">
+        <div class="d-flex justify-content-between align-items-center">
+            <h5 class="dress-name" th:text=${book.title}>Title</h5>
+            <div class="d-flex flex-column mb-2"> 
+            	<span class="new-price">$<span th:text="${#numbers.formatDecimal({book.price - book.price * book.discount / 100}, 1, 2)}" >value
+                	</span>
+                </span>
+                <small th:if="${book.discount>0}" class="old-price text-right"><del>$<span th:text="${#numbers.formatDecimal(book.price, 1, 2)}"></del></span>
+                </small>
+            </div>
+        </div>
+        </a>
+        <div class="d-flex justify-content-between align-items-center pt-1">
+            <div class="color-select d-flex hover-zoom">
+            	<a class="text-decoration-none text-body" th:href="@{/search/author/}+${book.author}">
+            		<small th:text=${book.author} class="text-left">Author</small>
+            	</a>
+            </div>
+            <div class="d-flex hover-zoom">
+	            <a th:href="@{/search/category/}+${book.category.name}" class="text-decoration-none text-body">
+	            	<small th:text=${book.category.name} >category</small>
+	            </a>
+            </div>
+        </div>
+        <div class="d-flex justify-content-between align-items-center pt-1">
+            <div>
+            	<span sec:authorize="isAuthenticated()">
+                	<a class="text-decoration-none text-success hover-zoom" sec:authorize="hasAuthority('book:write')" th:href="@{admin/book/edit/}+${book.id}"><i  class="fa fa-pencil-square-o" aria-hidden="true"></i></a>
+                	<a class="text-decoration-none text-danger hover-zoom" sec:authorize="hasAuthority('book:delete')" th:href="@{admin/book/delete/}+${book.id}"><i  class="fa fa-trash-o" aria-hidden="true"></i></a>
+            	</span>
+            </div> 
+            
+                <a th:href="@{/book/detail/}+${book.id}" class="text-decoration-none fw-bolder">BUY</a>
+        
+        </div>
+    </div>
+</div>

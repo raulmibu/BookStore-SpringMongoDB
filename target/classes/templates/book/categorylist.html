@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Category List</title>
+	<link rel="icon" type="image/png" href="/images/pageicon.png" sizes="128x128">
+	<link  rel="stylesheet" th:href="@{/css/bootstrap.css}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+<body>
+	<header>
+		<div th:replace="fragments/navbar :: navbar">
+		</div>
+	</header>
+	<div class="container">
+				<a sec:authorize="hasAuthority('book:read')" th:href="@{/admin/category/new}" class="btn btn-primary">Add a New Category</a>
+
+		<div class="row">
+			<div th:each="category:${categories}" class="col-6 col-md-4 col-xl-3">
+				<div class="card" ><a th:href="@{/search/category/}+${category.name}">
+				  <img class="card-img-top" th:src="*{'data:image/png;base64,'+category.image}" alt="Card image cap"></a>
+				  <div class="card-body">
+				    <a th:href="@{search/category/}+${category.name}" class="text-decoration-none">
+				    	<h5 th:text="${category.name}" class="card-title text-dark font-monospace fw-bold">Card title</h5>
+				    </a>
+				    <p th:if="${category.name!=null}" th:text="${category.description}"class="card-text fs-7">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+				    <a sec:authorize="hasAuthority('book:read')" th:href="@{category/detail/}+${category.id}" type="button" class="btn btn-info"><i class="fa fa-search-minus" aria-hidden="true"></i></a>
+				  	<a sec:authorize="hasAuthority('book:write')" th:href="@{/admin/category/edit/}+${category.id}" type="button" class="btn btn-warning"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></a>
+					<a sec:authorize="hasAuthority('book:delete')" th:href="@{/admin/category/delete/}+${category.id}" type="button" class="btn btn-danger"><i class="fa fa-trash-o" aria-hidden="true"></i></a>
+	
+				  </div>
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+</html>
