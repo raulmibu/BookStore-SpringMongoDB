@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title th:text ="${user.name +' '+user.lastname}">Profile</title>
-    <meta charset="UTF-8">
     <link rel="icon" type="image/png" href="/images/pageicon.png" sizes="128x128">
     <link href="/css/bootstrap.css" rel="stylesheet" th:href="@{/css/bootstrap.css}">
     <link href="/css/profile.css" rel="stylesheet" th:href="@{/css/profile.css}">
@@ -11,9 +11,173 @@
     <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
 </head>
 <body>
-<h3>Welcome back, <span th:text ="${user.getName() + ' ' +user.getLastname()}">name</span></h3>
-<span th:if="${user.profilePicture!=null}">
-    <img th:src="*{'data:image/png;base64,'+user.profilePicture}" class="img-fluid">
-</span>
+<header>
+    <div th:replace="fragments/navbar :: navbar">
+    </div>
+</header>
+<div>
+    <div class="container" th:if=${user!=null}>
+        <div class="row user-menu-container square ">
+            <div class="col-md-7 user-details ">
+                <div class="row coralbg white ">
+                    <div class="col-md-6 no-pad ">
+                        <div class="user-pad ">
+                            <h3>Welcome back, <span th:text ="${user.getName() + ' ' +user.getLastname()}">name</span></h3>
+                            <h4 class="white"><i class="fa fa-check-circle-o"></i> <span th:if="${user.adress!=null}" th:text ="${user.getAdress()}">addres</span>,
+                                <span th:if="${user.country!=null}" th:text ="${user.getCountry().getCode()}">Hi</span></h4>
+                            <h4 class="white"><i class="fa fa-twitter"></i> CoolesOCool</h4>
+                            <a th:if="${#authentication.getPrincipal().getUser().id==user.id}" th:href="@{/profile/edit/}">
+                                <button type="button" class="btn btn-labeled btn-info">
+                                    <span class="btn-label"><i class="fa fa-pencil"></i></span>Update</button>
+                            </a>
+                            <span th:if="${#authentication.getPrincipal().getUser().id!=user.id}">
+						<a sec:authorize="hasAuthority('user:write')" th:href="@{/admin/user/edit/}+${user.id}" ><button type="button" class="btn btn-labeled btn-info">
+                            <span class="btn-label"><i class="fa fa-pencil"></i></span>Update this user</button>
+                        </a></span>
+                            <div class="pt-md-2">
+                                <button sec:authorize="hasAuthority('user:read')" type="button"
+                                        th:classappend="${user.role.name=='ADMIN' ? 'btn-danger' : 'btn-info'}" class="btn btn-labeled">
+                                    <span class="btn-label"><i class="fa fa-users" aria-hidden="true"></i></span><span th:text ="${user.role.name}">rol</span></button>
+                                <button sec:authorize="hasAuthority('user:read')" type="button"
+                                        th:classappend="${user.enabled ? 'btn-success' : 'btn-warning'}" class="btn btn-labeled">
+                                    <span class="btn-label"><i class="fa fa-users" aria-hidden="true"></i></span><span th:text ="${user.isEnabledString()}">enabled</span></button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 no-pad">
+                        <div class="user-image bg-dark border">
+                    	<span th:if="${user.profilePicture!=null}">
+
+                    		<img alt="sample" class="img-fluid thumbnail"  th:src="*{'data:image/png;base64,'+user.profilePicture}" />
+                    	</span>
+                            <span th:if="${user.profilePicture==null}">
+                    	    <img src="https://farm7.staticflickr.com/6163/6195546981_200e87ddaf_b.jpg" class="img-fluid">
+                    	</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="row overview">
+                    <div class="col-md-4 user-pad text-center">
+                        <h3>How many books have you bought</h3>
+                        <h4 th:text ="${user.getManyBought()}">2,784</h4>
+                    </div>
+                    <div class="col-md-4 user-pad text-center">
+                        <h3>Total spent</h3>
+                        <h4><span th:text="${#numbers.formatDecimal({user.getTotalSpent()}, 1, 2)}">456</span>$</h4>
+                    </div>
+                    <div class="col-md-4 user-pad text-center">
+                        <h3>Member Since</h3>
+                        <h4 ><span th:text="${#temporals.format(user.created, 'dd ')}">day</span><span th:text="${#temporals.monthNameShort(user.created)}">month</span> <span th:text="${#temporals.year(user.created)}">year</span>
+                        </h4>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-1 user-menu-btns">
+                <div class="btn-group-vertical square" id="responsive">
+                    <a href="#"   class="btn btn-block btn-default active">
+                        <i class="fa fa-history fa-2x"></i>
+                    </a>
+                    <a href="#"  class="btn btn-default">
+                        <i class="fa fa-heart fa-2x"></i>
+                    </a>
+                    <a href="#" class="btn btn-default">
+                        <i class="fa fa-lock fa-2x" aria-hidden="true"></i>
+                    </a>
+                    <a href="#" class="btn btn-default">
+                        <i class="fa fa-picture-o fa-2x"></i>
+                    </a>
+                </div>
+            </div>
+            <div class="col-md-4 col-sm-12 user-menu user-pad">
+                <div class="user-menu-content active overflow-hidden">
+                    <h3>
+                        History
+                    </h3>
+                    <ul class="user-menu-list ">
+                        <li th:if="${results.empty}"><h5>You haven't seen any book'</h5></li>
+                        <li th:each="book:${results}" >
+                            <div class="row">
+                                <div class="col-3">
+                                    <a th:href="@{/book/detail/}+${book.id}" class="text-decoration-none text-body">
+                                        <img th:src="*{'data:image/png;base64,'+book.coverPicture}" class="history-image img-fluid rounded thumbnail-image">
+                                    </a>
+                                </div>
+                                <div class="col">
+                                    <a th:href="@{/book/detail/}+${book.id}" class="text-decoration-none text-body">
+                                        <h5 th:text="${book.title}">title</h5>
+                                        <h6 th:text="${book.author}">author</h6></a>
+                                </div>
+                            </div>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="user-menu-content">
+                    <h3>
+                        What you like
+                    </h3>
+                    <ul class="user-menu-list">
+                        <li th:if="${user.favoriteCategories==null}"><h5>You haven't told us what do you like yet</h5></li>
+                        <span th:if="${user.favoriteCategories!=null}">
+	                	<li th:if="${user.favoriteCategories.empty}"><h5>You haven't told us what do you like yet</h5></li>
+	                    <li  th:each="category:${user.favoriteCategories}">
+
+                        	<h4 ><a th:href="@{search/category/}+${category.name}" class="font-monospace text-decoration-none text-body">
+                        		<span th:text="${category.name}">title</span></a></h4>
+                    	</li>
+                    </span>
+                    </ul>
+                    <center class="pt-3">
+                        <button type="button" class="btn btn-labeled btn-info">
+                            <span class="btn-label"><i class="fa fa-pencil"></i></span>Edit favorite categories</button></center>
+                </div>
+                <div class="user-menu-content">
+                    <h2 class="text-center">
+                        Update Your Password
+                    </h2>
+                    <h5 class="text-center text-danger font-monospace fw-bold">
+                        You'll have to log in again!
+                    </h5>
+                    <div class="row">
+                        <form th:action="@{/profile/updatepassword}" th:object=${user} method="POST">
+                            <input type="hidden" th:field="*{id}" class="form-control" placeholder="id" required=""/>
+                            <div class="col">
+                                <div class="input-group mb-3">
+                                    <div class="input-group-prepend">
+							    	<span class="input-group-text" id="basic-addon1"><i class="fa fa-key input-group-text border-0" aria-hidden="true"></i>
+									</span>
+                                    </div>
+                                    <input placeholder="Password" required="" class="form-control" name="quanty" th:field="*{password}" th:type="password">
+                                </div>
+                            </div>
+                            <center><button type="submit" class="btn btn-lg btn-labeled btn-danger" href="#">
+                                <span class="btn-label"><i class="fa fa-lock" aria-hidden="true"></i></span>UPDATE PASSWORD
+                            </button></center>
+                        </form>
+                    </div>
+                </div>
+                <div class="user-menu-content ">
+                    <form th:action="@{/profile/updatephoto}" th:object=${user} method="POST" enctype="multipart/form-data">
+                        <input type="hidden" th:field="*{id}" class="form-control" placeholder="id" required=""/>
+                        <h2 class="text-center">
+                            UPDATE YOUR PICTURE
+                        </h2>
+                        <center><i class="fa fa-cloud-upload fa-4x"></i></center>
+                        <div class="share-links">
+                            <center><div class="col-9">
+                                <input class="form-control" type="file" name="file"  id="formFile" accept="image/*" required/>
+                                <label class="form-label" for="form3Example8">Profile Picture</label>
+                            </div></center>
+                            <center><button type="submit" class="btn btn-lg btn-labeled btn-warning" href="#">
+                                <span class="btn-label"><i class="fa fa-picture-o" aria-hidden="true"></i></span>UPDATE PHOTO
+                            </button></center>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script th:href="@{/js/profile.js}" src="/js/profile.js"></script>
 </body>
 </html>

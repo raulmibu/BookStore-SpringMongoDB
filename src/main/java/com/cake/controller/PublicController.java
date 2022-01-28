@@ -37,13 +37,13 @@ public class PublicController {
 	private BookService bookservice;
 	@Autowired
 	private CategoryService categoryservice;
-	
+
 //	@Autowired
 //	private List<Category> categories;
-	
+
 //	index and search results
-	
-	
+
+
 	@GetMapping("/")
 	public String index(Model model) {
 		model.addAttribute("results", bookservice.findAllActive(0,10,"title"));
@@ -51,15 +51,15 @@ public class PublicController {
 //		model.addAttribute("categories", categories);
 		return "index";
 	}
-	
+
 	@GetMapping("search")
 	public String search(Model model, @RequestParam("searching") String searching, Authentication authentication) {
 		List<Book> books=bookservice.search(searching);
-		
+
 		if(authentication!=null && authentication.isAuthenticated()) {
 			User user = ((ApplicationUser)  authentication.getPrincipal()).getUser();
 			if(user.getFavoriteCategories()!=null) {
-				
+
 				Iterator<Category> it=user.getFavoriteCategories().iterator();
 				while(it.hasNext()) {
 					Category cat=it.next();
@@ -68,7 +68,7 @@ public class PublicController {
 							books.get(i).addWeight(i);
 						}
 					}
-					
+
 				}
 			}
 			Collections.sort(books);
@@ -76,15 +76,15 @@ public class PublicController {
 		model.addAttribute("results",books);
 		return "index";
 	}
-	
-	
+
+
 	@GetMapping("search/author/{author}")
 	public String searchauthors(Model model,@PathVariable("author") String searching) {
 		List<Book> books=bookservice.findQuery("author",searching);
 		model.addAttribute("results",books);
 		return "index";
 	}
-	
+
 	@GetMapping("search/category/{category}")
 	public String searchcategories(Model model,@PathVariable("category") String searching) {
 		List<Book> books=bookservice.findQuery("category.name",searching);
@@ -110,11 +110,10 @@ public class PublicController {
 		}
 		return "redirect:/";
 	}
-	
+
 	@GetMapping("/categories")
 	public String fetchCategories(Model model) {
 		model.addAttribute("categories", categoryservice.getAll());
-//		model.addAttribute("categories", categories);
 		return "book/categorylist";
 	}
 
@@ -124,8 +123,8 @@ public class PublicController {
 	public String loginForm() {
 		return "public/login";
 	}
-	
-	
+
+
 	@GetMapping("/signup")
 	public String registerForm(Model model) {
 		model.addAttribute("genders",Gender.values());
@@ -133,11 +132,11 @@ public class PublicController {
 		model.addAttribute("roles",Role.values());
 		return "public/signup";
 	}
-	
-	
+
+
 	@PostMapping("/signingup")
-	public String registerFormPost(@Validated @ModelAttribute User usuario,@RequestParam("file") MultipartFile file, 
-			String userrole,String gender, BindingResult result, 
+	public String registerFormPost(@Validated @ModelAttribute User usuario,@RequestParam("file") MultipartFile file,
+			String userrole,String gender, BindingResult result,
 			Model model) throws IOException {
 		System.out.println(usuario.getName()+userrole+gender);
 		if(result.hasErrors()) {
@@ -162,7 +161,7 @@ public class PublicController {
 			}
 			if(!file.isEmpty()) {
 				if(file.getBytes()!=null) {
-					usuario.setProfilePicture(Base64.getEncoder().encodeToString(file.getBytes())); 
+					usuario.setProfilePicture(Base64.getEncoder().encodeToString(file.getBytes()));
 				}
 			}
 			userservice.save(usuario);
@@ -170,5 +169,5 @@ public class PublicController {
 			return "redirect:/";
 		}
 	}
-	
+
 }

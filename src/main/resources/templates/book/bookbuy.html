@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Not a Rickroll</title>
+	<link rel="icon" type="image/png" href="/images/pageicon.png" sizes="128x128">
+	<link  rel="stylesheet" th:href="@{/css/bootstrap.css}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+	<!--link  rel="stylesheet" th:href="@{/css/index.css}"-->
+	<link  rel="stylesheet" th:href="@{/css/bookcard.css}">
+
+</head>
+<body>
+	<header>
+		<div th:replace="fragments/navbar :: navbar">
+		</div>
+	</header>
+	<div class="embed-responsive embed-responsive-16by9">
+	  <iframe class="embed-responsive-item" src="https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+	</div>
+</body>
+</html>

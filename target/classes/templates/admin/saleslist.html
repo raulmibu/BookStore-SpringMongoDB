@@ -14,25 +14,28 @@
 		</div>
 	</header>
 	<div class="container">
-	<form th:action="@{/admin/sales}"  method="POST">
+	<form th:action="@{/admin/sales}"  method="POST" th:with="today=${#dates.format(#dates.createNow(), 'yyyy-MM-dd')}">
 		<div class="row border">
 		<label class="form-label " for="form3Example8">Filter by date range and/or category</label>
 			<div class="form-group col-md-3">
 		      <div class="input-group date">
-		        <input type="date" name="start" class="form-control" id="start" autocomplete="off"/>
+		        <input type="date" name="start" th:attr="max=${today}" th:value="${start}"
+					   class="form-control" id="start" autocomplete="off"/>
 		    	</div>
 		      <label  class="form-label" for="form3Example8">Start</label>
 		    </div>
 		    <div class="form-group col-md-3">
 		      <div class="input-group date">
-		        <input type="date" name="end" class="form-control" id="end" autocomplete="off"/>
+		        <input type="date" name="end" th:attr="max=${today}" th:value="${start}"
+					   class="form-control" id="end" autocomplete="off"/>
 		    	</div>
 		      <label class="form-label" for="form3Example8">End</label>
 		    </div>
 		    <div class="form-group col-md-3">
 				<select id="categoryid" name="categoryid" class="form-control">
 				  	<option value="no">All</option>
-				  	<option  th:each="operator : ${categories}" th:value="${operator.id}"  th:text="${operator.name}"
+				  	<option  th:each="operator : ${categories}" th:value="${operator.id}"
+							 th:text="${operator.name}" th:selected="${operator.id==categoryid}"
 				    	>One</option>
 				</select>
 				<label class="form-label" for="form3Example8">Category</label>
@@ -53,8 +56,7 @@
 					<th>Unit Price</th>				
 					<th>Discount</th>
 					<th>Total</th>
-					<th>Date</th>	
-					<th>Options</th>
+					<th>Date</th>
 				</tr>
 			</thead>
 			<tbody>

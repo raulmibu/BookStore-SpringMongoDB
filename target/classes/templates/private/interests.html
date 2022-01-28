@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Category List</title>
+	<link rel="icon" type="image/png" href="/images/pageicon.png" sizes="128x128">
+	<link  rel="stylesheet" th:href="@{/css/bootstrap.css}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+<body>
+	<header>
+		<div th:replace="fragments/navbar :: navbar">
+		</div>
+	</header>
+	<div class="container">
+				<a sec:authorize="hasAuthority('book:read')" th:href="@{/admin/category/new}" class="btn btn-primary">Add a New Category</a>
+		<form th:action="@{/profile/interests}" th:object="${usuario}" method="POST">
+		<input type="hidden" th:field="*{id}" class="form-control" placeholder="id"/>
+		<div class="row">
+			<div th:each="category, catStat: ${categories}" class="col-5 col-md-4 col-xl-3">
+				 <div class="form-group">
+					<div class="form-switch">
+						<label class="form-check-label card rounded" th:for="${catStat.index}">
+							<img class="card-img-top"  th:src="${'data:image/png;base64,'+category.image}">
+							<center><input th:field="*{favoriteCategories}" th:value="${category.id}" type="checkbox" class="form-check-input" th:id="${catStat.index}" autocomplete="off">
+							<span th:text="${category.name}">name - catgeory</span></center>
+						</label>
+					</div>
+				</div>
+			</div>
+		</div><button type="submit">Go</button>
+		</form>
+	</div>
+</body>
+</html>

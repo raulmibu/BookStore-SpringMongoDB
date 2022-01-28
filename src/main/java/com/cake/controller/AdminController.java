@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
 
+import com.cake.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -22,10 +23,6 @@ import org.springframework.web.multipart.MultipartFile;
 import com.cake.auth.ApplicationUser;
 import com.cake.auth.Gender;
 import com.cake.auth.Role;
-import com.cake.model.Book;
-import com.cake.model.Category;
-import com.cake.model.Country;
-import com.cake.model.User;
 import com.cake.service.BookService;
 import com.cake.service.CategoryService;
 import com.cake.service.SaleService;
@@ -216,5 +213,47 @@ public class AdminController {
 			return "private/profile";
 		}
 		return "redirect:/";
+	}
+
+	@PreAuthorize("hasAuthority('user:write')")
+	@GetMapping("sales")
+	public String showSales(Model model) {
+		model.addAttribute("sales", saleService.getAll());
+		model.addAttribute("categories", categoryService.getAll());
+		return "admin/saleslist";
+	}
+
+	@PostMapping("sales")
+	public String showSalesByDate(Model model,String categoryid, String start, String end) {
+		List<Sale> sales=new ArrayList<Sale>();
+
+		LocalDate datestart=null;
+		LocalDate dateend=null;
+		if(!start.isEmpty()) {
+			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+			datestart = LocalDate.parse(start, formatter);
+			if(!end.isEmpty()){
+				dateend = LocalDate.parse(end, formatter);
+			}else{
+				dateend=LocalDate.now();
+			}
+			if(datestart.isAfter(dateend)){
+				LocalDate temp=datestart;
+				datestart=dateend;
+				dateend=temp;
+			}
+		}
+
+		if(categoryid.compareTo("no")==0) {
+			sales= saleService.getSaleBeewtenDate(datestart,dateend,null);
+		}else {
+			sales= saleService.getSaleBeewtenDate(datestart,dateend,categoryid);
+		}
+		model.addAttribute("categoryid",categoryid);
+		model.addAttribute("start",datestart);
+		model.addAttribute("end",dateend);
+		model.addAttribute("sales",sales);
+		model.addAttribute("categories", categoryService.getAll());
+		return "admin/saleslist";
 	}
 }

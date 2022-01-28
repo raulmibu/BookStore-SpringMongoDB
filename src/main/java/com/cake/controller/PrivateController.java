@@ -54,8 +54,70 @@ public class PrivateController {
 			return "redirect:/login";
 		}
 	}
+	@GetMapping("/profile/interests")
+	public String profileInterests(Model model, Authentication authentication) {
+		if(authentication!=null && authentication.isAuthenticated()) {
+			User usuario = ((ApplicationUser)  authentication.getPrincipal()).getUser();
+			if(usuario.getFavoriteCategories()==null) {
+				usuario.setFavoriteCategories(new HashSet<Category>());
+			}
+			model.addAttribute("categories", categoryservice.getAll());
+//			model.addAttribute("categories", categories);
+			model.addAttribute("usuario",usuario);
+			return "private/interests";
 
-	
+		}else {
+			return "redirect:/login";
+		}
+	}
+	@PostMapping("/profile/interests")
+	public String profileInterestsSave(Model model,@ModelAttribute User usuario, Authentication authentication) {
+		if(authentication!=null && authentication.isAuthenticated()) {
+			User current = ((ApplicationUser)  authentication.getPrincipal()).getUser();
+			if(usuario!=null) {
+				Set<Category> set=usuario.getFavoriteCategories();
+				set.remove(null);
+				Iterator<Category> it=set.iterator();
+				while(it.hasNext()) {
+					Category cat=it.next();
+					cat.setDescription(null);
+					cat.setImage(null);
+				}
+				current.setFavoriteCategories(set);
+				userservice.updateFavoriteCategories(set, usuario.getId());
+			}
+		}
+		return "redirect:/profile";
+	}
+	@GetMapping("/book/buysuccess")
+	public String buy() {
+		return "book/bookbuy";
+	}
+	@PreAuthorize("isAuthenticated()")
+	@PostMapping("book/buy")
+	public String buyForm(Model model, Book book, int quanty, Authentication authentication) {
+		if(book!=null && quanty>0) {
+			if(authentication!=null && authentication.isAuthenticated()) {
+				User user = ((ApplicationUser)  authentication.getPrincipal()).getUser();
+				Sale sale=new Sale(user,book,quanty);
+				System.out.println(book.getTitle());
+				Sale result=saleservice.save(sale);
+				user.addBought(sale);
+				if(result!=null) {
+					userservice.updateBought(user.getBought(),user.getId());
+					bookservice.updateBought(book.getId(),quanty);
+					return "redirect:/book/buysuccess";
+				}
+			}
+		}
+		if(book!=null) {
+			return "redirect:/book/detail/"+book.getId();
+		}else {
+			return "redirect:/";
+		}
+	}
+
+
 	@GetMapping("profile/edit")
 	public String editUser(Model model, Authentication authentication) {
 		if(authentication!=null && authentication.isAuthenticated()) {
