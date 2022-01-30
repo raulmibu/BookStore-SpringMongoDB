@@ -182,13 +182,5 @@ public class BookService extends GenericService<Book, String>  {
 	    Page<Book> persons = repository.findByEnabled(true,pageable);
 	    return persons;
 	}
-
-    public void toggleEnable(String id) {
-		Optional<Book> book=repository.findById(id);
-		if(book.isPresent()){
-			Book b=book.get();
-			b.setEnabled(!b.isEnabled());
-			repository.save(b);
-		}
-    }
+	
 }

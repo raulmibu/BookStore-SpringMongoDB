@@ -58,7 +58,7 @@
 			              <label class="form-check-label" for="form2Example3">
 			                Remember me
 			              </label>
-			              <div class="link-danger" th:if="${param.error}">
+			              <div th:if="${param.error}">
 			               		Invalid email or password.
 			               </div>
 			               <div th:if="${param.logout}">

@@ -7,11 +7,6 @@ import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
 
-<<<<<<< Updated upstream
-=======
-import com.cake.model.*;
-import org.apache.coyote.http11.Constants;
->>>>>>> Stashed changes
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -197,7 +192,7 @@ public class AdminController {
 		return "redirect:/login";
 	}
 	
-//	@PreAuthorize("hasAuthority('user:write')")
+	@PreAuthorize("hasAuthority('user:write')")
 	@GetMapping("users")
 	public String showUsers(Model model, Authentication authentication) {
 		if(authentication!=null && authentication.isAuthenticated()) {
@@ -222,65 +217,4 @@ public class AdminController {
 		}
 		return "redirect:/";
 	}
-<<<<<<< Updated upstream
-=======
-
-	@PreAuthorize("hasAuthority('user:write')")
-	@GetMapping("sales")
-	public String showSales(Model model) {
-		model.addAttribute("sales", saleService.getAll());
-		model.addAttribute("categories", categoryService.getAll());
-		return "admin/saleslist";
-	}
-
-	@PostMapping("sales")
-	public String showSalesByDate(Model model,String categoryid, String start, String end) {
-		List<Sale> sales=new ArrayList<Sale>();
-
-		LocalDate datestart=null;
-		LocalDate dateend=null;
-		if(!start.isEmpty()) {
-			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-			datestart = LocalDate.parse(start, formatter);
-			if(!end.isEmpty()){
-				dateend = LocalDate.parse(end, formatter);
-			}else{
-				dateend=LocalDate.now();
-			}
-			if(datestart.isAfter(dateend)){
-				LocalDate temp=datestart;
-				datestart=dateend;
-				dateend=temp;
-			}
-		}
-
-		if(categoryid.compareTo("no")==0) {
-			sales= saleService.getSaleBeewtenDate(datestart,dateend,null);
-		}else {
-			sales= saleService.getSaleBeewtenDate(datestart,dateend,categoryid);
-		}
-		model.addAttribute("categoryid",categoryid);
-		model.addAttribute("start",datestart);
-		model.addAttribute("end",dateend);
-		model.addAttribute("sales",sales);
-		model.addAttribute("categories", categoryService.getAll());
-		return "admin/saleslist";
-	}
-	@PreAuthorize("hasAuthority('user:write')")
-	@GetMapping("user/disable/{id}")
-	public String disableUser(@PathVariable("id") String id , Model model) {
-		if(id != null && id != "") {
-			userService.toggleEnable(id);
-		}
-		return "redirect:/admin/users";
-	}
-	@PreAuthorize("hasAuthority('user:write')")
-	@GetMapping("book/disable/{id}")
-	public String disableBook(@PathVariable("id") String id , Model model) {
-		if(id != null && id != "") {
-			bookservice.toggleEnable(id);
-		}
-		return "redirect:/admin/books";
-	}
->>>>>>> Stashed changes
 }
