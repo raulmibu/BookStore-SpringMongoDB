@@ -27,8 +27,8 @@
                 </div>
             </form>
             <div class="navbar-nav" sec:authorize="!isAuthenticated()">
-                <a  href="/login" class="nav-item nav-link" id="login">Log in</a>
-                <a  href="/signup" class="nav-item nav-link">Register</a>
+                <a  th:href="@{/login}" class="nav-item nav-link" id="login">Log in</a>
+                <a  th:href="@{/signup}" class="nav-item nav-link">Register</a>
             </div>
             <div class="navbar-nav" sec:authorize="isAuthenticated()" th:with="user=${#authentication.getPrincipal()}">
                 <a th:href="@{/profile}" th:text ="${user.getNames()}" class="nav-item nav-link">Name</a>
