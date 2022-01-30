@@ -87,12 +87,14 @@ public class PrivateController {
 	}
 	
 	@PostMapping("profile/updatepassword")
-	public String updatePassword(Model model, User user) {
+	public String updatePassword(Model model, User user, Authentication authentication) {
 		if(user.getId()!=null && user.getPassword()!=null) {
 			if(!user.getPassword().isEmpty()) {
 				user.setPassword(userservice.encodePassword(user.getPassword()));
 				userservice.updateStringType("password",user.getPassword(), user.getId());
-				return "redirect:/logout";
+				if(((ApplicationUser)  authentication.getPrincipal()).getUser().getId().compareTo(user.getId())==0){
+					return "redirect:/logout";
+				}
 			}
 		}			
 		return "redirect:/profile";

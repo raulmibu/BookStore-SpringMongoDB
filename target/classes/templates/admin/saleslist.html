@@ -5,8 +5,6 @@
     <link href="/css/bootstrap.css" rel="stylesheet" th:href="@{/css/bootstrap.css}">
     <link href="/css/profile.css" rel="stylesheet" th:href="@{/css/profile.css}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-	<script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
-
 </head>
 <body>
 <header>
@@ -25,7 +23,12 @@
 		    </div>
 		    <div class="form-group col-md-3">
 		      <div class="input-group date">
+<<<<<<< Updated upstream
 		        <input type="date" name="end" class="form-control" id="end" autocomplete="off"/>
+=======
+		        <input type="date" name="end" th:attr="max=${today}" th:value="${end}"
+					   class="form-control" id="end" autocomplete="off"/>
+>>>>>>> Stashed changes
 		    	</div>
 		      <label class="form-label" for="form3Example8">End</label>
 		    </div>

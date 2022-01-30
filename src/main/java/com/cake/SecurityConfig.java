@@ -59,7 +59,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
 //				.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)//jwt is stateless
 //			.and()
 				.authorizeRequests()
-				.antMatchers("/","index","/api/**","/css/**","/images/**","/js/**","/login","/signup","/signingup","/book/**","/search/**","/categories/**")
+				.antMatchers("js/**","/","index","/api/**","/css/**","/images/**","/js/**","/login","/signup","/signingup","/book/**","/search/**","/categories/**")
 				.permitAll()
 				.anyRequest()
 				.authenticated()

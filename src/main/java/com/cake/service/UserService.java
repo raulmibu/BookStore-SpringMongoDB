@@ -153,6 +153,11 @@ public class UserService extends GenericService<User, String> {
 	}
 
 
-
-	
+    public void toggleEnable(String id) {
+		User user=repository.findByid(id);
+		if(user!=null){
+			user.setEnabled(!user.isEnabled());
+			repository.save(user);
+		}
+	}
 }

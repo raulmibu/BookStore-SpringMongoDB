@@ -48,6 +48,9 @@
 							<div class="btn-group" role="group" aria-label="Basic example">
 							  <a sec:authorize="hasAuthority('book:read')" th:href="@{/book/detail/}+${book.id}" type="button" class="btn btn-info"><i class="fa fa-search-minus" aria-hidden="true"></i></a>
 							  <a sec:authorize="hasAuthority('book:write')" th:href="@{book/edit/}+${book.id}" type="button" class="btn btn-warning"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></a>
+								<a sec:authorize="hasAuthority('book:write')" th:href="@{book/disable/}+${book.id}" type="button" class="btn"
+                                 th:classappend="${book.enabled ? 'btn-success' : 'btn-danger'}">
+                                  <i th:classappend="${book.enabled ? 'fa fa-toggle-on' : 'fa fa-toggle-off'}" class="" aria-hidden="true"></i></a>
 							  <a sec:authorize="hasAuthority('book:delete')" th:href="@{book/delete/}+${book.id}" type="button" class="btn btn-danger"><i class="fa fa-trash-o" aria-hidden="true"></i></a>
 							</div>
 							</td>
