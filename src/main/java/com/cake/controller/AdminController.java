@@ -25,6 +25,7 @@ import com.cake.auth.Role;
 import com.cake.model.Book;
 import com.cake.model.Category;
 import com.cake.model.Country;
+import com.cake.model.Sale;
 import com.cake.model.User;
 import com.cake.service.BookService;
 import com.cake.service.CategoryService;
@@ -34,96 +35,111 @@ import com.cake.service.UserService;
 @RequestMapping("admin")
 @Controller
 public class AdminController {
-	
+
 	@Autowired
 	private BookService bookservice;
 
 	@Autowired
 	private CategoryService categoryService;
 
+	//	@Autowired
+//	private List<Category> categories;
+//
 	@Autowired
 	private List<Country> countries;
-	
+
 	@Autowired
 	private UserService userService;
-	
+
 	@Autowired
 	private SaleService saleService;
-	
+
 	@PreAuthorize("hasAuthority('book:read')")
 	@GetMapping("/books")
 	public String fetchBooks(Model model ) {
-		int page=1;
+		int page=0;
+		if(page<0) {
+			page=1;
+		}
 		model.addAttribute("books", bookservice.getAll());
 		model.addAttribute("page",page);
 		return "book/booklist";
 	}
-	
+
 	@GetMapping("book/new")
 	public String insert(Model model) {
 		model.addAttribute("book", new Book());
 		model.addAttribute("categories", categoryService.getAll());
+//		model.addAttribute("categories", categories);
 		model.addAttribute("countries", countries);
 		return "book/booksave";
 	}
-	
+
 	@PreAuthorize("hasAuthority('book:write')")
 	@PostMapping("book/save")
 	public String save (@RequestParam("file") MultipartFile file, String categoryid, Book book, String countryid, Model model) throws IOException  {
 		if(!file.isEmpty()) {
 			if(file.getBytes()!=null) {
-				book.setCoverPicture(Base64.getEncoder().encodeToString(file.getBytes())); 
+				book.setCoverPicture(Base64.getEncoder().encodeToString(file.getBytes()));
 			}
 		}
 		if(book.getId().isEmpty()||book.getId()=="") {
 			book.setId(null);
 		}
+//		Category selecttedCategory=categories.stream()
+//				  .filter(category -> categoryid.equals(category.getId()))
+//				  .findFirst()
+//				  .orElse(categories.get(0));
 		if(book.getCategory()!=null) {
 			if(book.getCategory().getId().compareTo(categoryid)!=0) {
+//				book.setCategory(selecttedCategory);
 				book.setCategory(categoryService.findByid(categoryid));
+//				book.getCategory().setImage(null);
 			}
 		}else {
 			book.setCategory(categoryService.findByid(categoryid));
+//			book.setCategory(selecttedCategory);
 		}
 		if(book.getCountry()!=null) {
 			if(book.getCountry().getId().compareTo(countryid)!=0) {
 				book.setCountry(countries.stream()
-						  .filter(country -> countryid.equals(country.getId()))
-						  .findFirst()
-						  .orElse(countries.get(0)));
+						.filter(country -> countryid.equals(country.getId()))
+						.findFirst()
+						.orElse(countries.get(0)));
 			}
 		}else {
 			book.setCountry(countries.stream()
-					  .filter(country -> countryid.equals(country.getId()))
-					  .findFirst()
-					  .orElse(countries.get(0)));
+					.filter(country -> countryid.equals(country.getId()))
+					.findFirst()
+					.orElse(countries.get(0)));
 		}
 		bookservice.save(book);
 		return "redirect:/admin/books";
 	}
-	
+
 	@PreAuthorize("hasAuthority('book:write')")
 	@GetMapping("book/edit/{id}")
 	public String showEdit(@PathVariable("id") String id , Model model) {
 		if(id != null && id != "") {
 			Book book=bookservice.findByid(id);
 			model.addAttribute("book", book);
-			
+
 		}else {
 			model.addAttribute("book", new Book());
 		}
 		model.addAttribute("countries", countries);
 		model.addAttribute("categories", categoryService.getAll());
+//		model.addAttribute("categories", categories);
 		return "book/booksave";
 	}
-	
+
 	@PreAuthorize("hasAuthority('book:delete')")
 	@GetMapping("book/delete/{id}")
 	public String showDelete(@PathVariable("id") String id , Model model) {
 		if(id != null && id != "") {
 			Book book=bookservice.findByid(id);
 			model.addAttribute("book", book);
-			
+
 		}else {
 			return "redirect:/";
 		}
@@ -135,25 +151,30 @@ public class AdminController {
 		bookservice.delete(id);
 		return "redirect:/";
 	}
-	
+
 	@PreAuthorize("hasAuthority('book:write')")
 	@GetMapping("category/new")
 	public String insertCategory(Model model) {
 		model.addAttribute("category", new Category());
 		return "book/categorysave";
 	}
-	
+
 	@PreAuthorize("hasAuthority('book:write')")
 	@GetMapping("category/edit/{id}")
 	public String editCategory(@PathVariable("id") String id , Model model) {
 		if(id != null && id != "") {
+//			Category selecttedCategory=categories.stream()
+//					  .filter(category -> id.equals(category.getId()))
+//					  .findFirst()
+//					  .orElse(categories.get(0));
+//			model.addAttribute("category", selecttedCategory);
 			model.addAttribute("category", categoryService.findByid(id));
 		}else {
 			model.addAttribute("category", new Category());
 		}
 		return "book/categorysave";
 	}
-	
+
 	@PreAuthorize("hasAuthority('book:read')")
 	@GetMapping("/categories")
 	public String fetchCategories(Model model) {
@@ -161,22 +182,29 @@ public class AdminController {
 //		model.addAttribute("categories", categories);
 		return "book/categorylist";
 	}
-	
+
 	@PreAuthorize("hasAuthority('book:write')")
 	@PostMapping("category/saving")
 	public String saveCategory (@RequestParam("file") MultipartFile file, Category category, Model model) throws IOException  {
 		if(!file.isEmpty()) {
 			if(file.getBytes()!=null) {
-				category.setImage(Base64.getEncoder().encodeToString(file.getBytes())); 
+				category.setImage(Base64.getEncoder().encodeToString(file.getBytes()));
 			}
 		}
 		if(category.getId().isEmpty() || category.getId()=="") {
 			category.setId(null);
 		}
 		categoryService.save(category);
+//		Category temp=categories.stream()
+//				  .filter(cat -> category.getId().equals(cat.getId()))
+//				  .findFirst()
+//				  .orElse(null);
+//		if(temp!=null) {
+//			temp=category;
+//		}
 		return "redirect:/admin/categories";
 	}
-	
+
 	///////////// User admin
 	@PreAuthorize("hasAuthority('user:write')")
 	@GetMapping("user/edit/{id}")
@@ -191,7 +219,7 @@ public class AdminController {
 		}
 		return "redirect:/login";
 	}
-	
+
 	@PreAuthorize("hasAuthority('user:write')")
 	@GetMapping("users")
 	public String showUsers(Model model, Authentication authentication) {
@@ -202,7 +230,7 @@ public class AdminController {
 		}
 		return "redirect:/login";
 	}
-	
+
 	@PreAuthorize("hasAuthority('user:write')")
 	@GetMapping("user/detail/{id}")
 	public String showSave(@PathVariable("id") String id , Model model, Authentication authentication) {
@@ -213,8 +241,58 @@ public class AdminController {
 				return "redirect:/";
 			}
 			model.addAttribute("results", new ArrayList<Book>(user.getHistory()));
+			//model.addAttribute("results", bookservice.queryById(user.getHistory(),3));
 			return "private/profile";
 		}
 		return "redirect:/";
+	}
+
+	////
+//	@PreAuthorize("hasAuthority('user:write')")
+	@GetMapping("sales")
+	public String showSales(Model model) {
+		model.addAttribute("sales", saleService.getAll());
+		model.addAttribute("categories", categoryService.getAll());
+		return "admin/saleslist";
+	}
+
+	@PostMapping("sales")
+	public String showSalesByDate(Model model,String categoryid, String start, String end) {
+		List<Sale> sales=new ArrayList<Sale>();
+
+		LocalDate datestart=null;
+		LocalDate dateend=null;
+//		LocalDateTime.of, 0, 0, 0, 0)@DateTimeFormat(pattern = "")
+		if(start!=""||end!="") {
+			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+			datestart = LocalDate.parse(start, formatter);
+			dateend = LocalDate.parse(end, formatter);
+		}
+		if(categoryid.compareTo("no")==0) {
+			sales= saleService.getSaleBeewtenDate(datestart,dateend,null);
+		}else {
+			sales= saleService.getSaleBeewtenDate(datestart,dateend,categoryid);
+		}
+		model.addAttribute("sales",sales);
+		model.addAttribute("categories", categoryService.getAll());
+		return "admin/saleslist";
+	}
+
+	@PreAuthorize("hasAuthority('user:write')")
+	@GetMapping("user/enable/{id}")
+	public String disableUser(@PathVariable("id") String id , Model model) {
+		if(id != null && id != "") {
+			userService.togleEnableUser(id);
+		}
+		return "redirect:/admin/users";
+	}
+
+	@PreAuthorize("hasAuthority('book:write')")
+	@GetMapping("book/enable/{id}")
+	public String disableBook(@PathVariable("id") String id , Model model) {
+		if(id != null && id != "") {
+			bookservice.togleEnableBook(id);
+		}
+		return "redirect:/admin/books";
 	}
 }

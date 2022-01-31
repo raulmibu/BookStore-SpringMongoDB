@@ -152,6 +152,13 @@ public class UserService extends GenericService<User, String> {
 		
 	}
 
+	public void togleEnableUser(String id){
+		if(id!=null){
+			User user=repository.findByid(id);
+			user.setEnabled(!user.isEnabled());
+			repository.save(user);
+		}
+	}
 
 
 	

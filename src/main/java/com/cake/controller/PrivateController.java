@@ -38,24 +38,93 @@ public class PrivateController {
 	private BookService bookservice;
 	@Autowired
 	private CategoryService categoryservice;
-	
+//	@Autowired
+//	private List<Category> categories;
+
 	@Autowired
 	private SaleService saleservice;
-	
-	
+
+
 	@GetMapping("/profile")
 	public String profilePage(Model model, Authentication authentication) {
 		if(authentication!=null && authentication.isAuthenticated()) {
 			User currentUser = ((ApplicationUser)  authentication.getPrincipal()).getUser();
 			model.addAttribute("user", currentUser);
 			model.addAttribute("results",new ArrayList<Book>(currentUser.getHistory()));
+			//model.addAttribute("results", bookservice.queryById(currentUser.getHistory(),3));
 			return "private/profile";
 		}else {
 			return "redirect:/login";
 		}
 	}
 
-	
+	@GetMapping("/profile/interests")
+	public String profileInterests(Model model, Authentication authentication) {
+		if(authentication!=null && authentication.isAuthenticated()) {
+			User usuario = ((ApplicationUser)  authentication.getPrincipal()).getUser();
+			if(usuario.getFavoriteCategories()==null) {
+				usuario.setFavoriteCategories(new HashSet<Category>());
+			}
+			model.addAttribute("categories", categoryservice.getAll());
+//			model.addAttribute("categories", categories);
+			model.addAttribute("usuario",usuario);
+			return "private/interests";
+
+		}else {
+			return "redirect:/login";
+		}
+	}
+
+	@PostMapping("/profile/interests")
+	public String profileInterestsSave(Model model,@ModelAttribute User usuario, Authentication authentication) {
+		if(authentication!=null && authentication.isAuthenticated()) {
+			User current = ((ApplicationUser)  authentication.getPrincipal()).getUser();
+			if(usuario!=null) {
+				Set<Category> set=usuario.getFavoriteCategories();
+				set.remove(null);
+				Iterator<Category> it=set.iterator();
+				while(it.hasNext()) {
+					Category cat=it.next();
+					cat.setDescription(null);
+					cat.setImage(null);
+				}
+				current.setFavoriteCategories(set);
+				userservice.updateFavoriteCategories(set, usuario.getId());
+			}
+		}
+		return "redirect:/profile";
+	}
+
+
+
+	@GetMapping("/book/buysuccess")
+	public String buy() {
+		return "book/bookbuy";
+	}
+	@PreAuthorize("isAuthenticated()")
+	@PostMapping("book/buy")
+	public String buyForm(Model model, Book book, int quanty, Authentication authentication) {
+		if(book!=null && quanty>0) {
+			if(authentication!=null && authentication.isAuthenticated()) {
+				User user = ((ApplicationUser)  authentication.getPrincipal()).getUser();
+				Sale sale=new Sale(user,book,quanty);
+				System.out.println(book.getTitle());
+				Sale result=saleservice.save(sale);
+				user.addBought(sale);
+				if(result!=null) {
+					userservice.updateBought(user.getBought(),user.getId());
+					bookservice.updateBought(book.getId(),quanty);
+					return "redirect:/book/buysuccess";
+				}
+			}
+		}
+		if(book!=null) {
+			return "redirect:/book/detail/"+book.getId();
+		}else {
+			return "redirect:/";
+		}
+	}
+
 	@GetMapping("profile/edit")
 	public String editUser(Model model, Authentication authentication) {
 		if(authentication!=null && authentication.isAuthenticated()) {
@@ -68,7 +137,7 @@ public class PrivateController {
 		}
 		return "redirect:/login";
 	}
-	
+
 	@PostMapping("profile/updatephoto")
 	public String updatePhoto(Model model, @RequestParam("file") MultipartFile file, User user, Authentication authentication) throws IOException {
 		if(authentication!=null && authentication.isAuthenticated()) {
@@ -76,16 +145,16 @@ public class PrivateController {
 			if(!file.isEmpty()) {
 				if(file.getBytes()!=null) {
 					if(user.getId()!=null) {
-						user.setProfilePicture(Base64.getEncoder().encodeToString(file.getBytes())); 
+						user.setProfilePicture(Base64.getEncoder().encodeToString(file.getBytes()));
 						currentuser.setProfilePicture(user.getProfilePicture());
 						userservice.updateStringType("profilePicture",user.getProfilePicture(), user.getId());
 					}
 				}
 			}
-		}			
+		}
 		return "redirect:/profile";
 	}
-	
+
 	@PostMapping("profile/updatepassword")
 	public String updatePassword(Model model, User user) {
 		if(user.getId()!=null && user.getPassword()!=null) {
@@ -94,7 +163,7 @@ public class PrivateController {
 				userservice.updateStringType("password",user.getPassword(), user.getId());
 				return "redirect:/logout";
 			}
-		}			
+		}
 		return "redirect:/profile";
 	}
 }

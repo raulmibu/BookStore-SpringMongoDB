@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Book List</title>
 	<link rel="icon" type="image/png" href="/images/pageicon.png" sizes="128x128">
-	<link  rel="stylesheet" th:href="@{/css/bootstrap.css}">
+<!--	<link  rel="stylesheet" th:href="@{/css/bootstrap.css}">-->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 </head>
 <body>
@@ -48,7 +48,9 @@
 							<div class="btn-group" role="group" aria-label="Basic example">
 							  <a sec:authorize="hasAuthority('book:read')" th:href="@{/book/detail/}+${book.id}" type="button" class="btn btn-info"><i class="fa fa-search-minus" aria-hidden="true"></i></a>
 							  <a sec:authorize="hasAuthority('book:write')" th:href="@{book/edit/}+${book.id}" type="button" class="btn btn-warning"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></a>
-							  <a sec:authorize="hasAuthority('book:delete')" th:href="@{book/delete/}+${book.id}" type="button" class="btn btn-danger"><i class="fa fa-trash-o" aria-hidden="true"></i></a>
+							  <a sec:authorize="hasAuthority('book:write')" th:href="@{book/enable/}+${book.id}" type="button"
+								 th:classappend="${!book.enabled ? 'btn-danger' : 'btn-success'}" class="btn"><i th:classappend="${!book.enabled ? 'fa fa-toggle-off' : 'fa fa-toggle-on'}" class="" aria-hidden="true"></i></a>
+								<a sec:authorize="hasAuthority('book:delete')" th:href="@{book/delete/}+${book.id}" type="button" class="btn btn-danger"><i class="fa fa-trash-o" aria-hidden="true"></i></a>
 							</div>
 							</td>
 						</span>

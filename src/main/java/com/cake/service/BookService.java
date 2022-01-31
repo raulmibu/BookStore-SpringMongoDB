@@ -11,6 +11,7 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.cake.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -181,6 +182,17 @@ public class BookService extends GenericService<Book, String>  {
 //	    List<Book> persons = repository.findByEnabledIsTrue();
 	    Page<Book> persons = repository.findByEnabled(true,pageable);
 	    return persons;
+	}
+
+	public void togleEnableBook(String id){
+		if(id!=null){
+			Optional<Book> book=repository.findById(id);
+			if(book.isPresent()){
+				Book b=book.get();
+				b.setEnabled(!b.isEnabled());
+				repository.save(b);
+			}
+		}
 	}
 	
 }
