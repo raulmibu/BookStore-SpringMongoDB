@@ -22,7 +22,7 @@ import lombok.Data;
 
 @AllArgsConstructor
 @Data
-@Document(collection = "users")
+@Document(collection = "usuarios")
 public class User {
 	@Id
 	private String id;

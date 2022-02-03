@@ -3,6 +3,7 @@ package com.cake.jwt;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.Date;
+import java.util.stream.Collectors;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -18,6 +19,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.jsonwebtoken.Jwts;
+import org.springframework.web.bind.annotation.RequestParam;
 
 // add the filter to validate credentials and send the jwt 
 public class JwtUserAndPasswordFilter extends UsernamePasswordAuthenticationFilter{
@@ -34,13 +36,13 @@ public class JwtUserAndPasswordFilter extends UsernamePasswordAuthenticationFilt
 	
 //	override the attempt auth method, so we use jwt instead 
 	@Override
-	public Authentication attemptAuthentication(HttpServletRequest request, 
-			HttpServletResponse response) throws AuthenticationException {
+	public Authentication attemptAuthentication(HttpServletRequest request,
+												HttpServletResponse response) throws AuthenticationException {
 		try {
 //			map the user and password from the http request to the UserPasswordAuthRequest object
 			UserPasswordAuthRequest authRequest=
 					new ObjectMapper().readValue(request.getInputStream(),UserPasswordAuthRequest.class);
-			
+
 //			use the user and password from the http request, 
 			Authentication authentication=new UsernamePasswordAuthenticationToken(
 					authRequest.getUsername(),//this is the principal 
@@ -48,8 +50,6 @@ public class JwtUserAndPasswordFilter extends UsernamePasswordAuthenticationFilt
 //			we send the authentication object, the manager will check the username and the password
 //			with the authentication provider in the SecurityConfig
 			return authenticationManager.authenticate(authentication);//we send the Authentication object
-			
-			
 		}catch(IOException e) {
 			throw new RuntimeException(e);
 		}

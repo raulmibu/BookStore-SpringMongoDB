@@ -6,8 +6,14 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
+import com.cake.jwt.UserPasswordAuthRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -29,6 +35,9 @@ import com.cake.service.BookService;
 import com.cake.service.CategoryService;
 import com.cake.service.UserService;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+
 @Controller
 public class PublicController {
 	@Autowired
@@ -37,7 +46,8 @@ public class PublicController {
 	private BookService bookservice;
 	@Autowired
 	private CategoryService categoryservice;
-
+//	@Autowired
+//	AuthenticationManager authManager;
 //	@Autowired
 //	private List<Category> categories;
 
@@ -124,6 +134,20 @@ public class PublicController {
 	public String loginForm() {
 		return "public/login";
 	}
+
+//	@PostMapping("/logging")
+//	public void loginPostForm(HttpServletRequest req, @RequestParam("username")String username, @RequestParam("password") String password) {
+//		UserPasswordAuthRequest auth2=new UserPasswordAuthRequest();
+//		auth2.setPassword(password);
+//		auth2.setUsername(username);
+//		UsernamePasswordAuthenticationToken authReq
+//				= new UsernamePasswordAuthenticationToken(username, password);
+//		Authentication auth = authManager.authenticate(authReq);
+//		SecurityContext sc = SecurityContextHolder.getContext();
+//		sc.setAuthentication(auth);
+//		HttpSession session = req.getSession(true);
+//		session.setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY, sc);
+//	}
 
 
 	@GetMapping("/signup")
